@@ -9,10 +9,10 @@ import kotlin.io.path.Path
   * We can't keep the whole file in the RAM. So we have to process the file line by line.
   * To be able to remove all the duplicates while processing the file line by line,
   * we have to sort lines first.
-  * Merge sort is the only way I can sort a file that doesn't feet in the memory.
+  * Merge sort is the only way I can sort a file that doesn't fit in the memory.
   *
   * Step by step:
-  * 1. Split the file to multiple chunks that fits in memory. Say 512Mb or 1Gb
+  * 1. Split the file into multiple chunks that fits in memory. Say 512Mb
   * 2. Run sorting of each chunk concurrently (could be started as soon as the first chunk is written to file)
   * 3. Merge files line by line to make a sorted file (could be started as soon as we have <mergeFactor> chunks sorted)
   *   3.1 Select Merge factor - how many files will be merged to a single file (e.g. 8)
@@ -30,7 +30,7 @@ import kotlin.io.path.Path
   *
   *  Test: 120GB; line size: 14 symbols average
   *  Hardware: MacBook Pro 2019, 2.6 GHz 6-Core, 16Gb RAM, SSD
-  *  Params: -xmx4g; initialChunkSize = 128L * Mb; sortParallelism = 6; mergeParallelism = unbounded; mergeFactor = 8
+  *  Params: -xmx4g; sortChunkSize = 128L * Mb; sortParallelism = 6; mergeFactor = 8
   *  Time: 1h 11m
   *  Result: 1_000_000_000
  */
@@ -38,7 +38,7 @@ import kotlin.io.path.Path
 fun main() {
 
     // ========  Params  =========
-    val inputPath = "/Users/vitaly/Downloads/ip_addresses"
+    val inputPath = "data/example"
 
     // takes twice more in java heap because char takes 2 bytes
     val sortChunkSize: Long = 128L * MB
