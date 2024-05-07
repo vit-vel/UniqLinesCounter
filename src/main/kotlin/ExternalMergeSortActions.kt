@@ -157,7 +157,6 @@ class FileLinesMergeSortActions(
     /**
      * Merges sorted chunks
      * @param lineAction is called for each uniq line within merge. E.g. write to file
-     * @param lastBlockAction is called in the end of merging for the last chunk when other chunks are over.
      */
     private fun innerMergeCustom(
         chunkNames: Array<String>,

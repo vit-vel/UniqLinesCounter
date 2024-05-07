@@ -107,7 +107,6 @@ class UniqLinesCounter(
     }
 
     private fun countUniqAsync() {
-        println("call count uniq")
         if (!resultFuture.isDone && readyChunks.size > 0) {
             var chunks: Array<String>? = null
             synchronized(takeReadyChunksLock) {
