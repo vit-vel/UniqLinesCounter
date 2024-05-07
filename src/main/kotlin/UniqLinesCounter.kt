@@ -3,7 +3,6 @@ package org.example
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.Volatile
 
@@ -18,7 +17,6 @@ class UniqLinesCounter(
 ) {
 
     // used to check if no new chunks expected
-    private val allChunksReceived = AtomicBoolean(false)
     private val activeJobsCounter = AtomicInteger(0)
 
     @Volatile
@@ -35,11 +33,13 @@ class UniqLinesCounter(
     }
 
     fun run(inputPath: String, splitChunkMaxSize: Long): CompletableFuture<Long> {
+        activeJobsCounter.incrementAndGet()
         CompletableFuture.supplyAsync {
             mergeSortActions.split(inputPath, splitChunkMaxSize, Int.MAX_VALUE.toLong()) { chunkName ->
                 sortFileAsync(chunkName)
             }
-            allChunksReceived.set(true)
+            activeJobsCounter.decrementAndGet()
+            Unit
         }.exceptionally(stageExceptionHandler)
 
         return resultFuture
@@ -148,5 +148,5 @@ class UniqLinesCounter(
         return chunks
     }
 
-    private fun noMoreChunksExpected() = allChunksReceived.get() && activeJobsCounter.get() == 0
+    private fun noMoreChunksExpected() = activeJobsCounter.get() == 0
 }
