@@ -78,7 +78,7 @@ class UniqLinesCounter(
         ).exceptionally(stageExceptionHandler)
     }
 
-    fun mergeAsync() {
+    private fun mergeAsync() {
         activeJobsCounter.incrementAndGet()
         val chunks = getChunksForMerging()
         chunks?.let { chunkNames ->
@@ -86,8 +86,8 @@ class UniqLinesCounter(
                 {
                     if (isCancelled()) activeJobsCounter.decrementAndGet()
                     else {
-                        val resultPath = mergeSortActions.merge(chunkNames)
-                        readyChunks.add(resultPath)
+                        val resultChunk = mergeSortActions.merge(chunkNames)
+                        readyChunks.add(resultChunk)
                         activeJobsCounter.decrementAndGet()
                         tryRunNextStep()
                     }
